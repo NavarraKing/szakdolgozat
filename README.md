@@ -1,2 +1,2 @@
 # szakdolgozat
-Thesis of Tóth Tamás and Surányi Szabolcs
+Thesis of Tóth Tamás
