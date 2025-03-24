@@ -1,0 +1,25 @@
+CREATE DATABASE 0319Ora CHARSET utf8 COLLATE utf8_general_ci;
+USE 0319Ora;
+CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50), password VARCHAR(255), email VARCHAR(100), phone_number VARCHAR(20), location VARCHAR(100), address VARCHAR(100), rights INT);
+CREATE TABLE products (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), price INT, description TEXT);
+
+INSERT INTO products (name, price, description) VALUES ('Hamburger', 200, 'Hamburger with cheese and salad');
+INSERT INTO products (name, price, description) VALUES ('Cheeseburger', 250, 'Cheeseburger with cheese and salad');
+INSERT INTO products (name, price, description) VALUES ('Pizza', 800, 'Large pizza with pepperoni and cheese');
+INSERT INTO products (name, price, description) VALUES ('Hotdog', 150, 'Hotdog with mustard and ketchup');
+INSERT INTO products (name, price, description) VALUES ('Fries', 100, 'Crispy french fries');
+INSERT INTO products (name, price, description) VALUES ('Chicken Nuggets', 300, '10 pieces of chicken nuggets');
+INSERT INTO products (name, price, description) VALUES ('Salad', 200, 'Fresh garden salad');
+INSERT INTO products (name, price, description) VALUES ('Pasta', 400, 'Pasta with tomato sauce and cheese');
+INSERT INTO products (name, price, description) VALUES ('Steak', 1200, 'Grilled steak with vegetables');
+INSERT INTO products (name, price, description) VALUES ('Fish and Chips', 600, 'Fried fish with chips');
+INSERT INTO products (name, price, description) VALUES ('Ice Cream', 150, 'Vanilla ice cream with chocolate syrup');
+INSERT INTO products (name, price, description) VALUES ('Milkshake', 200, 'Chocolate milkshake');
+INSERT INTO products (name, price, description) VALUES ('Coffee', 100, 'Hot coffee');
+INSERT INTO products (name, price, description) VALUES ('Tea', 80, 'Hot tea');
+INSERT INTO products (name, price, description) VALUES ('Soda', 120, 'Chilled soda');
+INSERT INTO products (name, price, description) VALUES ('Juice', 150, 'Fresh orange juice');
+INSERT INTO products (name, price, description) VALUES ('Water', 50, 'Bottled water');
+INSERT INTO products (name, price, description) VALUES ('Cake', 300, 'Chocolate cake slice');
+INSERT INTO products (name, price, description) VALUES ('Donut', 100, 'Glazed donut');
+INSERT INTO products (name, price, description) VALUES ('Sandwich', 250, 'Club sandwich with ham and cheese');
