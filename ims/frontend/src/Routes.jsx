@@ -9,6 +9,8 @@ import ProductsManager from "./ProductsManager.jsx";
 import Users from "./Users.jsx";
 import UsersManager from "./UsersManager.jsx";
 import { AuthContext } from "./AuthProvider.jsx";
+import Seller from "./Seller.jsx";
+import Receipts from "./Receipts.jsx";
 
 function AppRoutes() {
   const { user, handleLogin } = useContext(AuthContext);
@@ -20,11 +22,13 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/auth" element={<Login onLogin={handleLogin} />} />
       <Route path="/profile" element={<Profile />} />
+      <Route path="/seller" element={<Seller />} />
       {user?.account_level === 1 && (
         <>
           <Route path="/products-manager" element={<ProductsManager />} />
           <Route path="/users" element={<Users />} />
           <Route path="/users-manager" element={<UsersManager />} />
+          <Route path="/receipts" element={<Receipts />} />
         </>
       )}
     </Routes>

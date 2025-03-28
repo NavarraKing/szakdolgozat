@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "./AuthProvider.jsx";
-import { Card, Button, Modal } from "react-bootstrap";
+import { Card, Button, Modal, DropdownButton, Dropdown } from "react-bootstrap";
 
 function Users() {
   const { token } = useContext(AuthContext);
@@ -8,6 +8,14 @@ function Users() {
   const [error, setError] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [orderBy, setOrderBy] = useState("id");
+  const [isDescending, setIsDescending] = useState(false);
+
+  const displayOrderBy = {
+    id: "ID",
+    username: "Name",
+    account_level: "Account Level",
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -20,7 +28,12 @@ function Users() {
 
         const data = await response.json();
         if (response.ok) {
-          setUsers(data.sort((a, b) => a.id - b.id));
+          setUsers(
+            data.map((user) => ({
+              ...user,
+              role: user.rolename, // Fetch role name from roles table
+            }))
+          );
         } else {
           setError(data.message);
         }
@@ -30,6 +43,16 @@ function Users() {
     };
     fetchUsers();
   }, [token]);
+
+  const sortedUsers = [...users].sort((a, b) => {
+    if (orderBy === "account_level") {
+      if (a.account_level === b.account_level) {
+        return isDescending ? b.id - a.id : a.id - b.id;
+      }
+      return isDescending ? b.account_level - a.account_level : a.account_level - b.account_level;
+    }
+    return isDescending ? b[orderBy] > a[orderBy] ? 1 : -1 : a[orderBy] > b[orderBy] ? 1 : -1;
+  });
 
   const handleShowModal = (user) => {
     setSelectedUser(user);
@@ -45,8 +68,29 @@ function Users() {
     <div className="container mt-5">
       <h1 className="text-center mb-4">Users</h1>
       {error && <p className="text-danger text-center">{error}</p>}
+      <div className="d-flex align-items-center mb-3">
+        <DropdownButton
+          title={`Order By: ${displayOrderBy[orderBy]}`}
+          onSelect={(e) => setOrderBy(e)}
+          className="me-2"
+        >
+          <Dropdown.Item eventKey="id">ID</Dropdown.Item>
+          <Dropdown.Item eventKey="username">Name</Dropdown.Item>
+          <Dropdown.Item eventKey="account_level">Account Level</Dropdown.Item>
+        </DropdownButton>
+        <Button
+          variant="light"
+          onClick={() => setIsDescending(!isDescending)}
+        >
+          <img
+            src="images/icons/sort/sort-32.png"
+            alt="Sort"
+            style={{ transform: isDescending ? "rotate(180deg)" : "none" }}
+          />
+        </Button>
+      </div>
       <div className="row">
-        {users.map((user) => (
+        {sortedUsers.map((user) => (
           <div className="col-md-4 col-sm-6 mb-4" key={user.id}>
             <Card className="h-100 shadow-sm text-center d-flex flex-column justify-content-center" style={{ width: "100%", minHeight: "300px" }}>
               <div
@@ -70,7 +114,7 @@ function Users() {
               </div>
               <Card.Body className="d-flex flex-column justify-content-center">
                 <Card.Title className="text-truncate">
-                  {user.username}, {user.account_level === 1 ? "Admin" : user.role || "User"}
+                  {user.username}, {user.role || "User"}
                 </Card.Title>
                 <Card.Text>Account Level: {user.account_level}</Card.Text>
                 <Button

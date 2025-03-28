@@ -254,9 +254,11 @@ app.get("/api/user", authenticateToken, async (req, res) => {
 app.get("/api/users", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const [users] = await db.query(
-      `SELECT id, username, email, phone_number, given_name, family_name, 
-              DATE_FORMAT(dob, '%Y-%m-%d') AS dob, address, profile_picture, account_level 
-       FROM users`
+      `SELECT u.id, u.username, u.email, u.phone_number, u.given_name, u.family_name, 
+              DATE_FORMAT(u.dob, '%Y-%m-%d') AS dob, u.address, u.profile_picture, 
+              u.account_level, r.rolename 
+       FROM users u
+       LEFT JOIN roles r ON u.account_level = r.id`
     );
     res.json(users);
   } catch (err) {
@@ -488,6 +490,39 @@ app.delete("/api/products/:id", authenticateToken, requireAdmin, async (req, res
   }
 });
 
+// Restock products (Admin only)
+app.post("/api/products/restock", authenticateToken, requireAdmin, async (req, res) => {
+  const { restockData, mode } = req.body; // mode: "ADD" or "SET"
+  const { id: adminId } = req.user;
+
+  if (!restockData || restockData.length === 0) {
+    return res.status(400).json({ message: "No products selected for restocking." });
+  }
+
+  try {
+    for (const { id, amount } of restockData) {
+      const [product] = await db.query("SELECT stock FROM products WHERE id = ?", [id]);
+      if (product.length === 0) {
+        return res.status(404).json({ message: `Product with ID ${id} not found.` });
+      }
+
+      const currentStock = product[0].stock;
+      const newStock = mode === "ADD" ? currentStock + amount : amount;
+
+      await db.query("UPDATE products SET stock = ? WHERE id = ?", [newStock, id]);
+      await db.query(
+        "INSERT INTO products_logs (product_id, modified, modified_by) VALUES (?, ?, ?)",
+        [id, `${mode === "ADD" ? "Added" : "Set"} stock: ${currentStock} -> ${newStock}`, adminId]
+      );
+    }
+
+    res.json({ message: "Products restocked successfully." });
+  } catch (err) {
+    console.error("Error restocking products:", err);
+    res.status(500).json({ message: "Error restocking products." });
+  }
+});
+
 // Fetch max account level
 app.get("/api/roles/max", authenticateToken, async (req, res) => {
   try {
@@ -496,6 +531,84 @@ app.get("/api/roles/max", authenticateToken, async (req, res) => {
   } catch (err) {
     console.error("Error fetching max account level:", err);
     res.status(500).json({ message: "Error fetching max account level" });
+  }
+});
+
+// Create a receipt
+app.post("/api/receipts", authenticateToken, async (req, res) => {
+  const { items, payment_method } = req.body;
+  const { id: seller_id } = req.user;
+
+  if (!items || items.length === 0 || !payment_method) {
+    return res.status(400).json({ message: "Invalid request data." });
+  }
+
+  try {
+    const itemIds = items.map((item) => item.id);
+    const [products] = await db.query(
+      "SELECT id, itemname AS name, price, stock FROM products WHERE id IN (?)",
+      [itemIds]
+    );
+
+    const productStockMap = products.reduce((map, product) => {
+      map[product.id] = { name: product.name, price: product.price, stock: product.stock };
+      return map;
+    }, {});
+
+    const detailedItems = items.map((item) => {
+      const product = productStockMap[item.id];
+      if (!product || product.stock < item.quantity) {
+        throw new Error(`Insufficient stock for product ID: ${item.id}`);
+      }
+      return {
+        id: item.id,
+        name: product.name,
+        price: product.price,
+        quantity: item.quantity,
+        total: product.price * item.quantity,
+      };
+    });
+
+    const total_price = detailedItems.reduce((sum, item) => sum + item.total, 0);
+
+    const [receiptResult] = await db.query(
+      "INSERT INTO receipts (seller_id, items, payment_method, total_price) VALUES (?, ?, ?, ?)",
+      [seller_id, JSON.stringify(detailedItems), payment_method, total_price]
+    );
+
+    for (const item of items) {
+      const product = productStockMap[item.id];
+      const newStock = product.stock - item.quantity;
+      await db.query(
+        "UPDATE products SET stock = ? WHERE id = ?",
+        [newStock, item.id]
+      );
+      await db.query(
+        "INSERT INTO products_logs (product_id, modified, modified_by) VALUES (?, ?, ?)",
+        [item.id, `Sold: Stock changed, ${product.stock} -> ${newStock}`, seller_id]
+      );
+    }
+
+    res.status(201).json({ message: "Receipt created successfully.", transactionId: receiptResult.insertId });
+  } catch (err) {
+    console.error("Error creating receipt:", err);
+    res.status(500).json({ message: "Error creating receipt." });
+  }
+});
+
+// Fetch all receipts (Admin only)
+app.get("/api/receipts", authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const [receipts] = await db.query(
+      "SELECT id, seller_id, total_price, items, created_at FROM receipts"
+    );
+    res.json(receipts.map((receipt) => ({
+      ...receipt,
+      items: JSON.parse(receipt.items),
+    })));
+  } catch (err) {
+    console.error("Error fetching receipts:", err);
+    res.status(500).json({ message: "Error fetching receipts" });
   }
 });
 

@@ -18,21 +18,35 @@ function CustomNavbar() {
             <Nav.Link as={Link} to="/" className="text-light ms-3">
               Home
             </Nav.Link>
-            {user && (
-              <Nav.Link as={Link} to="/products" className="text-light">
-                Products
-              </Nav.Link>
+            {user && user?.account_level !== 1 && (
+              <>
+                <Nav.Link as={Link} to="/products" className="text-light">
+                  Products
+                </Nav.Link>
+                <Nav.Link as={Link} to="/seller" className="text-light">
+                  Seller
+                </Nav.Link>
+              </>
             )}
             {user?.account_level === 1 && (
               <>
+                <Nav.Link as={Link} to="/products" className="text-light">
+                  Products
+                </Nav.Link>
                 <Nav.Link as={Link} to="/products-manager" className="text-light">
-                  Manage Products
+                  Products Manager
                 </Nav.Link>
                 <Nav.Link as={Link} to="/users" className="text-light">
                   Users
                 </Nav.Link>
                 <Nav.Link as={Link} to="/users-manager" className="text-light">
                   Users Manager
+                </Nav.Link>
+                <Nav.Link as={Link} to="/seller" className="text-light">
+                  Seller
+                </Nav.Link>
+                <Nav.Link as={Link} to="/receipts" className="text-light">
+                  Receipts
                 </Nav.Link>
               </>
             )}

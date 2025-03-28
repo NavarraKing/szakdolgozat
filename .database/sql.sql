@@ -40,6 +40,7 @@ CREATE TABLE products(
     created_by INT NOT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    FOREIGN KEY (created_by) REFERENCES users(id)
 );
 CREATE TABLE products_logs(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -50,3 +51,12 @@ CREATE TABLE products_logs(
     FOREIGN KEY (product_id) REFERENCES products(id),
     FOREIGN KEY (modified_by) REFERENCES users(id)
 );
+CREATE TABLE receipts(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    seller_id INT NOT NULL,
+    items TEXT NOT NULL,
+    payment_method VARCHAR(30) NOT NULL,
+    total_price INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (seller_id) REFERENCES users(id)
+)

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "./AuthProvider.jsx";
-import { Form, Button, Container, Row, Col, Alert, Modal, Card } from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Alert, Modal, Card, Table, DropdownButton, Dropdown } from "react-bootstrap";
 
 function ProductsManager() {
   const { token } = useContext(AuthContext);
@@ -20,6 +20,13 @@ function ProductsManager() {
   const [maxProductId, setMaxProductId] = useState(0);
   const [showAddModal, setShowAddModal] = useState(false);
   const [tempImageUrl, setTempImageUrl] = useState("");
+  const [showRestockModal, setShowRestockModal] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [restockAmount, setRestockAmount] = useState(0);
+  const [applySameAmount, setApplySameAmount] = useState(false);
+  const [restockMode, setRestockMode] = useState("ADD");
+  const [individualAmounts, setIndividualAmounts] = useState({});
+  const [individualModes, setIndividualModes] = useState({});
 
   const defaultImageUrl = "https://www.cams-it.com/wp-content/uploads/2015/05/default-placeholder-200x200.png";
 
@@ -272,6 +279,44 @@ function ProductsManager() {
     setShowAddModal(true);
   };
 
+  const handleRestock = async () => {
+    if (selectedProducts.length === 0) {
+      setError("No products selected for restocking.");
+      return;
+    }
+
+    const restockData = selectedProducts.map((productId) => ({
+      id: productId,
+      amount: applySameAmount ? restockAmount : individualAmounts[productId] || 0,
+    }));
+
+    try {
+      const response = await fetch("http://localhost:5000/api/products/restock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ restockData, mode: restockMode }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setSuccess("Products restocked successfully!");
+        fetchProducts();
+        setShowRestockModal(false);
+        setSelectedProducts([]);
+        setRestockAmount(0);
+        setApplySameAmount(false);
+        setIndividualAmounts({});
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError("Error restocking products.");
+    }
+  };
+
   return (
     <Container className="mt-5">
       <h1 className="text-center mb-4">Products Manager</h1>
@@ -417,13 +462,22 @@ function ProductsManager() {
             </Form.Group>
           </Col>
         </Row>
-        <Row>
-          <Col>
+        <Row className="mb-3">
+          <Col md={3}>
             <Button variant="primary" className="w-100" onClick={handleAddProductClick}>
               Add Product
             </Button>
           </Col>
-          <Col>
+          <Col md={3}>
+            <Button
+              variant="info"
+              className="w-100"
+              onClick={() => setShowRestockModal(true)}
+            >
+              Restock Products
+            </Button>
+          </Col>
+          <Col md={3}>
             <Button
               variant="success"
               className="w-100"
@@ -433,7 +487,7 @@ function ProductsManager() {
               Update Product
             </Button>
           </Col>
-          <Col>
+          <Col md={3}>
             <Button
               variant="danger"
               className="w-100"
@@ -529,6 +583,236 @@ function ProductsManager() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <Modal
+        show={showRestockModal}
+        onHide={() => setShowRestockModal(false)}
+        centered
+        dialogClassName="restock-modal"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Restock Products</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ maxHeight: "600px", overflowY: "auto", minHeight: "600px" }}> 
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Select Products</Form.Label>
+              <DropdownButton
+                title="Select Products"
+                className="w-100"
+                variant="secondary"
+                autoClose={false} 
+              >
+                <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+                  <Dropdown.Item as="div">
+                    <Form.Check
+                      type="checkbox"
+                      label="Select All"
+                      checked={selectedProducts.length === products.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedProducts(products.map((product) => product.id));
+                        } else {
+                          setSelectedProducts([]);
+                        }
+                      }}
+                    />
+                  </Dropdown.Item>
+                  {products.map((product) => (
+                    <Dropdown.Item key={product.id} as="div">
+                      <Form.Check
+                        type="checkbox"
+                        label={`${product.itemname} (Stock: ${product.stock})`}
+                        checked={selectedProducts.includes(product.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedProducts([...selectedProducts, product.id]);
+                          } else {
+                            setSelectedProducts(
+                              selectedProducts.filter((id) => id !== product.id)
+                            );
+                          }
+                        }}
+                      />
+                    </Dropdown.Item>
+                  ))}
+                </div>
+              </DropdownButton>
+            </Form.Group>
+
+            <Row className="mb-3">
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Global Restock Mode</Form.Label>
+                  <div style={{ width: "100%" }}>
+                    <Form.Control
+                      as="select"
+                      value={restockMode.global || "ADD"}
+                      onChange={(e) => {
+                        const globalMode = e.target.value;
+                        setRestockMode((prev) => {
+                          const updatedModes = { ...prev, global: globalMode };
+                          selectedProducts.forEach((id) => {
+                            updatedModes[id] = globalMode;
+                          });
+                          return updatedModes;
+                        });
+                      }}
+                    >
+                      <option value="ADD">Add</option>
+                      <option value="SET">Set</option>
+                    </Form.Control>
+                  </div>
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>
+                    Global Restock Value
+                    <Form.Check
+                      inline
+                      type="checkbox"
+                      className="ms-2"
+                      checked={selectedProducts.length > 0 && selectedProducts.every((id) => individualModes[id]?.GRV)}
+                      onChange={(e) => {
+                        const isChecked = e.target.checked;
+                        setIndividualModes((prev) => {
+                          const updatedModes = { ...prev };
+                          selectedProducts.forEach((id) => {
+                            updatedModes[id] = {
+                              ...updatedModes[id],
+                              GRV: isChecked,
+                            };
+                          });
+                          return updatedModes;
+                        });
+                      }}
+                      disabled={selectedProducts.length === 0}
+                    />
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    min="0"
+                    value={restockAmount}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value, 10) || 0;
+                      setRestockAmount(value);
+                      setIndividualAmounts((prev) => {
+                        const updatedAmounts = { ...prev };
+                        selectedProducts.forEach((id) => {
+                          if (individualModes[id]?.GRV === true) {
+                            updatedAmounts[id] = value;
+                          }
+                        });
+                        return updatedAmounts;
+                      });
+                    }}
+                    disabled={!selectedProducts.some((id) => individualModes[id]?.GRV)}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Table striped bordered>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Stock</th>
+                  <th>GRV</th>
+                  <th>Restock Amount</th>
+                  <th>Restock Mode</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedProducts.length > 0 ? (
+                  selectedProducts.map((productId) => {
+                    const product = products.find((p) => p.id === productId);
+                    return (
+                      <tr key={productId}>
+                        <td>{product.itemname}</td>
+                        <td>{product.stock}</td>
+                        <td>
+                          <Form.Check
+                            type="checkbox"
+                            checked={individualModes[productId]?.GRV || false}
+                            onChange={(e) => {
+                              const isChecked = e.target.checked;
+                              setIndividualModes((prev) => ({
+                                ...prev,
+                                [productId]: {
+                                  ...prev[productId],
+                                  GRV: isChecked,
+                                },
+                              }));
+                              if (isChecked) {
+                                setIndividualAmounts((prev) => ({
+                                  ...prev,
+                                  [productId]: restockAmount,
+                                }));
+                              }
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <Form.Control
+                            type="number"
+                            min="0"
+                            value={individualAmounts[productId] || 0}
+                            onChange={(e) =>
+                              setIndividualAmounts({
+                                ...individualAmounts,
+                                [productId]: parseInt(e.target.value, 10) || 0,
+                              })
+                            }
+                            disabled={individualModes[productId]?.GRV || false}
+                          />
+                        </td>
+                        <td>
+                          <Form.Control
+                            as="select"
+                            value={restockMode[productId] || restockMode.global || "ADD"}
+                            onChange={(e) =>
+                              setRestockMode({
+                                ...restockMode,
+                                [productId]: e.target.value,
+                              })
+                            }
+                          >
+                            <option value="ADD">Add</option>
+                            <option value="SET">Set</option>
+                          </Form.Control>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center">
+                      No products selected
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowRestockModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleRestock}>
+            Restock
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <style>
+        {`
+          .restock-modal .modal-dialog {
+            max-width: 1000px; /* Increase width */
+          }
+        `}
+      </style>
     </Container>
   );
 }

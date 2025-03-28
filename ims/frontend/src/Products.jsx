@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "./AuthProvider.jsx";
-import { Card, Button, Modal } from "react-bootstrap";
+import { Card, Button, Modal, DropdownButton, Dropdown } from "react-bootstrap";
 
 function Products() {
   const { token } = useContext(AuthContext);
@@ -8,6 +8,22 @@ function Products() {
   const [error, setError] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showModal, setShowModal] = useState(false); 
+  const [orderBy, setOrderBy] = useState("id");
+  const [isDescending, setIsDescending] = useState(false);
+
+  const displayOrderBy = {
+    id: "ID",
+    displayname: "Name",
+    price: "Price",
+    stock: "Stock",
+  };
+
+  const sortedProducts = [...products].sort((a, b) => {
+    if (isDescending) {
+      return b[orderBy] > a[orderBy] ? 1 : -1;
+    }
+    return a[orderBy] > b[orderBy] ? 1 : -1;
+  });
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -45,8 +61,30 @@ function Products() {
     <div className="container mt-5">
       <h1 className="text-center mb-4">Products</h1>
       {error && <p className="text-danger text-center">{error}</p>}
+      <div className="d-flex align-items-center mb-3">
+        <DropdownButton
+          title={`Order By: ${displayOrderBy[orderBy]}`}
+          onSelect={(e) => setOrderBy(e)}
+          className="me-2"
+        >
+          <Dropdown.Item eventKey="id">ID</Dropdown.Item>
+          <Dropdown.Item eventKey="displayname">Name</Dropdown.Item>
+          <Dropdown.Item eventKey="price">Price</Dropdown.Item>
+          <Dropdown.Item eventKey="stock">Stock</Dropdown.Item>
+        </DropdownButton>
+        <Button
+          variant="light"
+          onClick={() => setIsDescending(!isDescending)}
+        >
+          <img
+            src="images/icons/sort/sort-32.png"
+            alt="Sort"
+            style={{ transform: isDescending ? "rotate(180deg)" : "none" }}
+          />
+        </Button>
+      </div>
       <div className="row">
-        {products.map((product) => (
+        {sortedProducts.map((product) => (
           <div className="col-md-4 col-sm-6 mb-4" key={product.id}>
             <Card className="h-100 shadow-sm position-relative">
               <Card.Img
@@ -85,7 +123,10 @@ function Products() {
                     product.description
                   )}
                 </Card.Text>
-                <Card.Text className="fw-bold">${product.price}</Card.Text>
+                <div className="d-flex justify-content-between">
+                  <Card.Text className="fw-bold">${product.price}</Card.Text>
+                  <Card.Text className="fw-bold text-muted">Stock: {product.stock}</Card.Text>
+                </div>
               </Card.Body>
             </Card>
           </div>
