@@ -254,7 +254,7 @@ app.get("/api/user", authenticateToken, async (req, res) => {
 app.get("/api/users", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const [users] = await db.query(
-      `SELECT u.id, u.username, u.email, u.phone_number, u.given_name, u.family_name, 
+      `SELECT u.id, u.username, u.email, u.phone_number, u.number_countrycode, u.given_name, u.family_name, 
               DATE_FORMAT(u.dob, '%Y-%m-%d') AS dob, u.address, u.profile_picture, 
               u.account_level, r.rolename 
        FROM users u
@@ -492,7 +492,7 @@ app.delete("/api/products/:id", authenticateToken, requireAdmin, async (req, res
 
 // Restock products (Admin only)
 app.post("/api/products/restock", authenticateToken, requireAdmin, async (req, res) => {
-  const { restockData, mode } = req.body; // mode: "ADD" or "SET"
+  const { restockData, mode } = req.body;
   const { id: adminId } = req.user;
 
   if (!restockData || restockData.length === 0) {

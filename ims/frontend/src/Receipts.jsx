@@ -159,7 +159,7 @@ function Receipts() {
                 <h5>Receipt</h5>
                 <p>Transaction ID: {selectedReceipt.id}</p>
                 <p>Seller ID: {selectedReceipt.seller_id}</p>
-                <p>Date: {formatDate(selectedReceipt.created_at)}</p> {/* Format date */}
+                <p>Date: {formatDate(selectedReceipt.created_at)}</p> 
                 <Table striped bordered>
                   <thead>
                     <tr>

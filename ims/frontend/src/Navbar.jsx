@@ -71,7 +71,11 @@ function CustomNavbar() {
                   className="text-light"
                   style={{ cursor: 'pointer' }}
                 >
-                  Logout
+                  <img
+                    src="images/icons/logout/logout-32.png"
+                    alt="Logout"
+                    className="icon-img"
+                  />
                 </Nav.Link>
               </>
             )}

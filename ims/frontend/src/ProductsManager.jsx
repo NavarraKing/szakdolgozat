@@ -28,7 +28,7 @@ function ProductsManager() {
   const [individualAmounts, setIndividualAmounts] = useState({});
   const [individualModes, setIndividualModes] = useState({});
 
-  const defaultImageUrl = "https://www.cams-it.com/wp-content/uploads/2015/05/default-placeholder-200x200.png";
+  const defaultImageUrl = "https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg";
 
   const handleResetImageUrl = () => {
     setProduct({ ...product, image_url: defaultImageUrl });
@@ -154,7 +154,7 @@ function ProductsManager() {
       ...product,
       price: product.price || 0,
       stock: product.stock || 0,
-      image_url: product.image_url || "https://www.cams-it.com/wp-content/uploads/2015/05/default-placeholder-200x200.png",
+      image_url: product.image_url || "https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg",
     };
 
     if (!productToSend.itemname || !productToSend.displayname || productToSend.description.trim() === "") {
@@ -809,7 +809,7 @@ function ProductsManager() {
       <style>
         {`
           .restock-modal .modal-dialog {
-            max-width: 1000px; /* Increase width */
+            max-width: 1000px;
           }
         `}
       </style>

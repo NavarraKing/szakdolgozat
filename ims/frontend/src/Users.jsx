@@ -31,7 +31,7 @@ function Users() {
           setUsers(
             data.map((user) => ({
               ...user,
-              role: user.rolename, // Fetch role name from roles table
+              role: user.rolename,
             }))
           );
         } else {

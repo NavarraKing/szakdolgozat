@@ -37,6 +37,15 @@ body {
   color: #E68A2E; /* Amber Orange */
 }
 
+.navbar-custom .nav-link {
+  color: #F7F4EF !important; /* Ivory Mist */
+  transition: color 0.3s ease;
+}
+
+.navbar-custom .nav-link:hover {
+  color: #E68A2E !important; /* Amber Orange */
+}
+
 .icon-btn {
   background: none;
   border: none;
@@ -48,8 +57,14 @@ body {
 }
 
 .icon-img {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) invert(1);
+  transition: filter 0.3s ease;
+}
+
+.icon-img:hover {
+  filter: invert(60%) sepia(41%) saturate(862%) hue-rotate(346deg) brightness(95%) contrast(90%);
 }
 
 .main-content {

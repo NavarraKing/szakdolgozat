@@ -125,7 +125,6 @@ function Seller() {
       {success && <Alert variant="success">{success}</Alert>}
 
       <Row>
-        {/* Left Side: Add Items */}
         <Col md={6}>
           <h3>Add Items</h3>
           <Form.Group className="mb-3">
@@ -156,7 +155,7 @@ function Seller() {
                     value={product.id}
                     disabled={remainingStock === 0}
                     style={{
-                      backgroundColor: remainingStock === 0 ? "#eaeaea" : "white", // Disabled product background
+                      backgroundColor: remainingStock === 0 ? "#eaeaea" : "white",
                     }}
                   >
                     {product.displayname} - ${product.price}{" "}
@@ -183,7 +182,7 @@ function Seller() {
                 const maxStock = getRemainingStock(selectedProduct?.id);
                 setQuantity(value > maxStock ? maxStock : value);
               }}
-              disabled={!selectedProduct} // Disable until a product is selected
+              disabled={!selectedProduct}
             />
           </Form.Group>
           <Button variant="primary" onClick={handleAddToCart}>
@@ -191,7 +190,6 @@ function Seller() {
           </Button>
         </Col>
 
-        {/* Right Side: Cart */}
         <Col md={6}>
           <h3>Cart</h3>
           <Table striped bordered hover>
@@ -249,7 +247,6 @@ function Seller() {
         </Col>
       </Row>
 
-      {/* Checkout Confirmation Modal */}
       <Modal show={showCheckoutModal} onHide={() => setShowCheckoutModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Checkout</Modal.Title>
@@ -265,7 +262,6 @@ function Seller() {
         </Modal.Footer>
       </Modal>
 
-      {/* Receipt Modal */}
       <Modal show={showReceiptModal} onHide={() => setShowReceiptModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Receipt</Modal.Title>

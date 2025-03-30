@@ -10,6 +10,7 @@ function UsersManager() {
     username: "",
     email: "",
     phone_number: "",
+    number_countrycode: "",
     given_name: "",
     family_name: "",
     dob: "",
@@ -22,9 +23,10 @@ function UsersManager() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [tempProfilePicture, setTempProfilePicture] = useState("");
-  const defaultProfilePicture = "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106";
+  const defaultProfilePicture = "https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
   const [showPicturePopup, setShowPicturePopup] = useState(false);
   const [maxAccountLevel, setMaxAccountLevel] = useState(0);
+  const currentYear = new Date().getFullYear();
 
   const fetchUsers = async () => {
     try {
@@ -83,13 +85,30 @@ function UsersManager() {
     }
   };
 
-    const handleSelectUser = (e) => {
+  const handleDOBChange = (e) => {
+    const value = e.target.value;
+    setUser({ ...user, dob: value });
+    setError("");
+
+    if (value.length > 10) {
+      setError("Invalid date format. Ensure it is a valid string.");
+      return;
+    }
+
+    const [year] = value.split("-");
+    if (year < 1925 || year > 2025) {
+      setError(`Year must be between 1925 and ${currentYear}.`);
+    }
+  };
+
+  const handleSelectUser = (e) => {
     const selectedId = parseInt(e.target.value, 10);
     const selectedUser = users.find((u) => u.id === selectedId) || {
       id: 0,
       username: "",
       email: "",
       phone_number: "",
+      number_countrycode: "",
       given_name: "",
       family_name: "",
       dob: "", 
@@ -135,6 +154,7 @@ function UsersManager() {
           username: "",
           email: "",
           phone_number: "",
+          number_countrycode: "",
           given_name: "",
           family_name: "",
           dob: "",
@@ -225,6 +245,39 @@ function UsersManager() {
             </Form.Group>
           </Col>
           <Col md={6}>
+            <Form.Group controlId="account_level">
+              <Form.Label>Account Level</Form.Label>
+              <Form.Control
+                type="number"
+                name="account_level"
+                value={user.account_level}
+                onChange={handleInputChange}
+                min="0"
+                max={maxAccountLevel}
+                disabled={isDisabled || user.id === currentUser.id}
+              />
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row className="mb-3">
+          <Col md={6}>
+            <Form.Group controlId="number_countrycode">
+              <Form.Label>Country Code</Form.Label>
+              <Form.Control
+                as="select"
+                name="number_countrycode"
+                value={user.number_countrycode || ""}
+                onChange={handleInputChange}
+                disabled={isDisabled}
+              >
+                <option value="+36">+36 (Hungary)</option>
+                <option value="+1">+1 (USA)</option>
+                <option value="+44">+44 (UK)</option>
+                <option value="+49">+49 (Germany)</option>
+              </Form.Control>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
             <Form.Group controlId="phone_number">
               <Form.Label>Phone Number</Form.Label>
               <Form.Control
@@ -271,7 +324,8 @@ function UsersManager() {
                 type="date"
                 name="dob"
                 value={user.dob}
-                onChange={handleInputChange}
+                onChange={handleDOBChange}
+                max={`${currentYear}-12-31`}
                 disabled={isDisabled}
               />
             </Form.Group>
@@ -285,22 +339,6 @@ function UsersManager() {
                 value={user.address}
                 onChange={handleInputChange}
                 disabled={isDisabled}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
-        <Row className="mb-3">
-          <Col>
-            <Form.Group controlId="account_level">
-              <Form.Label>Account Level</Form.Label>
-              <Form.Control
-                type="number"
-                name="account_level"
-                value={user.account_level}
-                onChange={handleInputChange}
-                min="0"
-                max={maxAccountLevel}
-                disabled={isDisabled || user.id === currentUser.id}
               />
             </Form.Group>
           </Col>

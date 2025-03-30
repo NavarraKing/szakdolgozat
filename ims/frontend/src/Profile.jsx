@@ -25,8 +25,7 @@ function Profile() {
   const [showPicturePopup, setShowPicturePopup] = useState(false);
   const [tempProfilePicture, setTempProfilePicture] = useState("");
   const [role, setRole] = useState("User");
-  const defaultProfilePicture =
-    "https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106";
+  const defaultProfilePicture ="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg";
 
   useEffect(() => {
     const fetchUserData = async () => {

@@ -11,7 +11,7 @@ CREATE TABLE users (
     family_name VARCHAR(100),
     dob VARCHAR(10),
     address VARCHAR(255),
-    profile_picture TEXT DEFAULT 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Default_pfp.jpg?20200418092106',
+    profile_picture TEXT DEFAULT 'https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg',
     account_level TINYINT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -36,7 +36,7 @@ CREATE TABLE products(
     price INT NOT NULL, 
     stock INT DEFAULT 0, 
     description TEXT DEFAULT NULL, 
-    image_url TEXT DEFAULT 'https://www.cams-it.com/wp-content/uploads/2015/05/default-placeholder-200x200.png', 
+    image_url TEXT DEFAULT 'https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg', 
     created_by INT NOT NULL, 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
     last_modified TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
