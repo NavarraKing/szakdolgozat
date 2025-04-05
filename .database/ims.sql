@@ -50,12 +50,12 @@ CREATE TABLE IF NOT EXISTS `products` (
 --
 
 INSERT INTO `products` (`id`, `itemname`, `displayname`, `price`, `stock`, `description`, `image_url`, `created_by`, `created_at`, `last_modified`) VALUES
-(1, 'cheeseburger', 'Cheeseburger', 11, 100, 'A delicious cheeseburger with melted cheese.', 'https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg', 0, '2025-03-30 12:36:26', '2025-03-30 12:36:26'),
-(2, 'chocolateshake', 'Chocolate Shake', 7, 200, 'A creamy chocolate milkshake.', 'https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg', 0, '2025-03-30 12:36:26', '2025-03-30 12:36:26'),
-(3, 'largefries', 'Large Fries', 3, 150, 'Crispy golden fries in a large serving.', 'https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg', 0, '2025-03-30 12:36:26', '2025-03-30 12:36:26'),
-(4, 'mediumfries', 'Medium Fries', 2, 100, 'Crispy golden fries in a medium serving.', 'https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg', 0, '2025-03-30 12:36:26', '2025-03-30 14:25:27'),
-(5, 'bigcocacola', 'Big Coca Cola', 5, 94, 'A refreshing large Coca Cola.', 'https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg', 0, '2025-03-30 12:36:26', '2025-03-30 14:25:41'),
-(6, 'smallcocacola', 'Small Coca Cola', 2, 84, 'A refreshing small Coca Cola.', 'https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg', 0, '2025-03-30 12:36:26', '2025-03-30 15:18:17'),
+(1, 'cheeseburger', 'Cheeseburger', 11, 99, 'A delicious cheeseburger with melted cheese.', 'https://t3.ftcdn.net/jpg/12/15/44/76/360_F_1215447672_pfEcb6sxQb7g6qSVCIrDJSWk8XYo9AGn.jpg', 0, '2025-03-30 12:36:26', '2025-04-05 19:27:21'),
+(2, 'chocolateshake', 'Chocolate Shake', 7, 200, 'A creamy chocolate milkshake.', 'https://t4.ftcdn.net/jpg/05/83/27/97/360_F_583279705_3ApajXiewkJCWg2cysoDrAJHZqAwjT1t.jpg', 0, '2025-03-30 12:36:26', '2025-04-05 18:39:25'),
+(3, 'largefries', 'Large Fries', 3, 150, 'Crispy golden fries in a large serving.', 'https://t4.ftcdn.net/jpg/12/65/11/65/360_F_1265116550_XEy7H051ouOcCe7Ti6ve5ZrJb5gQKLBx.jpg', 0, '2025-03-30 12:36:26', '2025-04-05 18:41:25'),
+(4, 'mediumfries', 'Medium Fries', 2, 100, 'Crispy golden fries in a medium serving.', 'https://t3.ftcdn.net/jpg/00/46/24/84/360_F_46248483_gyGNXtWgaJjB1VzBmsnfmiiTedw1Da2j.jpg', 0, '2025-03-30 12:36:26', '2025-04-05 18:41:19'),
+(5, 'bigcocacola', 'Big Coca Cola', 5, 94, 'A refreshing large Coca Cola.', 'https://t4.ftcdn.net/jpg/02/84/65/61/360_F_284656117_sPF8gVWaX627bq5qKrlrvCz1eFfowdBf.jpg', 0, '2025-03-30 12:36:26', '2025-04-05 18:41:59'),
+(6, 'smallcocacola', 'Small Coca Cola', 2, 84, 'A refreshing small Coca Cola.', 'https://t4.ftcdn.net/jpg/03/02/06/91/360_F_302069193_28NB8ujDIqbyrrgfOW9RrFaB4S0QaWlS.jpg', 0, '2025-03-30 12:36:26', '2025-04-05 18:42:17'),
 (7, 'chickennuggets', 'Chicken Nuggets', 5, 112, 'Crispy and tender chicken nuggets.', 'https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg', 0, '2025-03-30 12:36:26', '2025-03-30 14:25:01'),
 (8, 'fishsandwich', 'Fish Sandwich', 6, 75, 'A tasty fish sandwich with tartar sauce.', 'https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg', 0, '2025-03-30 12:36:26', '2025-03-30 12:36:26'),
 (9, 'vanillashake', 'Vanilla Shake', 7, 109, 'A creamy vanilla milkshake.', 'https://t4.ftcdn.net/jpg/05/17/53/57/360_F_517535712_q7f9QC9X6TQxWi6xYZZbMmw5cnLMr279.jpg', 0, '2025-03-30 12:36:26', '2025-03-30 15:18:17'),
